@@ -30,6 +30,6 @@ jobs:
       - name: Run Sysdig CLI Scanner Action
         uses: ccollicutt/sysdig-cli-scanner-github-action@main
         with:
-          sysdig-api-key: ${{ secrets.SYSDIG_API_KEY }}
-          sysdig-api-url: ${{ secrets.SYSDIG_API_URL }}
+          sysdig-api-key: ${{ secrets.SECURE_API_KEY }}
+          sysdig-api-url: ${{ secrets.SECURE_API_URL }}
           image-name: ${{ vars.IMAGE_NAME }}
