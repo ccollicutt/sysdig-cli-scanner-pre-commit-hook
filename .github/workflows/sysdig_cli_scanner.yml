@@ -22,6 +22,8 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         context: .
+        # to add it to the local docker instance so that it can be found by
+        # the sysdig cli scanner action set load to true
         load: true
         push: false
         tags: ${{ vars.IMAGE_NAME }}:latest
