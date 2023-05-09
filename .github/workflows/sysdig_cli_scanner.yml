@@ -22,6 +22,7 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         context: .
+        load: true
         push: false
         tags: ${{ vars.IMAGE_NAME }}:latest
 
@@ -30,4 +31,4 @@ jobs:
       with:
         sysdig-api-key: ${{ secrets.SECURE_API_TOKEN }}
         sysdig-api-url: ${{ secrets.SECURE_API_URL }}
-        image-name: ${{ vars.IMAGE_NAME }}
+        image-name: ${{ vars.IMAGE_NAME }}:latest
