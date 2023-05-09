@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  build_and_push:
+  build_and_scan:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
@@ -24,12 +24,10 @@ jobs:
         context: .
         push: false
         tags: ${{ vars.IMAGE_NAME }}:latest
-  sysdig_scan:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Run Sysdig CLI Scanner Action
-        uses: ccollicutt/sysdig-cli-scanner-github-action@main
-        with:
-          sysdig-api-key: ${{ secrets.SECURE_API_TOKEN }}
-          sysdig-api-url: ${{ secrets.SECURE_API_URL }}
-          image-name: ${{ vars.IMAGE_NAME }}
+
+    - name: Run Sysdig CLI Scanner Action
+      uses: ccollicutt/sysdig-cli-scanner-github-action@main
+      with:
+        sysdig-api-key: ${{ secrets.SECURE_API_TOKEN }}
+        sysdig-api-url: ${{ secrets.SECURE_API_URL }}
+        image-name: ${{ vars.IMAGE_NAME }}
