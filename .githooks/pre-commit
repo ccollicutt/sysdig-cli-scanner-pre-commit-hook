@@ -1,0 +1,91 @@
+#!/bin/bash
+
+IMAGE_TAG="${IMAGE_NAME}:$(date +%s)"
+
+# Log a message and exit with a specified exit code
+log_and_exit() {
+  local message="$1"
+  local exit_code="$2"
+
+  echo "${message}"
+  exit "${exit_code}"
+}
+
+# Check if the required environment variables are set
+check_env_vars() {
+  if [[ -z "${IMAGE_NAME}" ]]; then
+    log_and_exit "The IMAGE_NAME environment variable is not set. Please set it before running the script." 1
+  fi
+
+  if [[ -z "${SECURE_API_TOKEN}" ]]; then
+    log_and_exit "The Sysdig SECURE_API_TOKEN is not set. Please set it before running the script." 1
+  fi
+
+  if [[ -z "${SYSDIG_POLICY_NAME}" ]]; then
+    log_and_exit "The SYSDIG_POLICY_NAME environment variable is not set. Please set it before running the script." 1
+  fi
+
+  if [[ -z "${SYSDIG_API_URL}" ]]; then
+    log_and_exit "The SYSDIG_API_URL environment variable is not set. Please set it before running the script." 1
+  fi
+}
+
+# Check if IGNORE_DOCKERFILE environment variable is set
+check_ignore_dockerfile() {
+  if [[ ! -z "${IGNORE_DOCKERFILE}" ]]; then
+    log_and_exit "IGNORE_DOCKERFILE environment variable is set. Skipping Docker build and Sysdig Secure scan." 0
+  fi
+}
+
+# Check if there are any changes in the staging area
+check_staged_changes() {
+  if ! git diff --cached --quiet; then
+    return 0
+  else
+    log_and_exit "No staged changes. Skipping pre-commit hook." 0
+  fi
+}
+
+# Check if the commit has a Dockerfile
+commit_has_dockerfile() {
+  git diff --cached --name-only | grep --quiet "^Dockerfile$"
+}
+
+# Build the Docker image
+docker_build() {
+  echo "=================================================="
+  echo "Building the Docker image..."
+  docker build -t "${IMAGE_TAG}" . && \
+    echo "Docker build successful." || \
+    log_and_exit "Docker build failed. Fix the issues before committing." 1
+}
+
+# Run Sysdig Secure scan and delete the image afterward
+sysdig_scan_and_delete_image() {
+  echo "=================================================="
+  echo "Running Sysdig Secure scan..."
+  sysdig-cli-scanner --apiurl "${SYSDIG_API_URL}" \
+    --policy "${SYSDIG_POLICY_NAME}" \
+    "${IMAGE_TAG}" && \
+    echo "Sysdig Secure scan successful." || \
+    log_and_exit "Sysdig Secure scan failed. Fix the issues before committing." 1
+
+  docker rmi "${IMAGE_TAG}"
+  echo "Deleted the Docker image: ${IMAGE_TAG}"
+}
+
+main() {
+  check_env_vars
+  check_ignore_dockerfile
+  check_staged_changes
+
+  if ! commit_has_dockerfile; then
+    echo "No Dockerfile changes detected. Skipping Docker build and Sysdig image scan."
+    exit 0
+  fi
+
+  docker_build
+  sysdig_scan_and_delete_image
+}
+
+main
