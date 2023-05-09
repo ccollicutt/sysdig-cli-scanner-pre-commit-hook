@@ -11,6 +11,10 @@ This is a pre-commit hook that will scan will build an image based on the local 
 
 Easily done at [https://sysdig.com/start-free/](https://sysdig.com/start-free/).
 
+### Install the Sysdig Scanner CLI
+
+Follow these docs: [https://docs.sysdig.com/en/docs/installation/sysdig-secure/install-vulnerability-cli-scanner/](https://docs.sysdig.com/en/docs/installation/sysdig-secure/install-vulnerability-cli-scanner/)
+
 ### Create a Pipeline Policy
 
 Create a pipeline policy that will be used to evaluate the results of the scan. Here's an example of a policy that will fail if there are any high or greater vulnerabilities that are fixable.
