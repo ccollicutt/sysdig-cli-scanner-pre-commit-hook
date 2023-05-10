@@ -1,5 +1,7 @@
 # sysclig-cli-scanner-pre-commit-hook
 
+[![Sysdig CLI Scanner](https://github.com/ccollicutt/sysdig-cli-scanner-pre-commit-hook/actions/workflows/sysdig_cli_scanner.yml/badge.svg)](https://github.com/ccollicutt/sysdig-cli-scanner-pre-commit-hook/actions/workflows/sysdig_cli_scanner.yml)
+
 ## Overview
 
 This is a pre-commit hook that will scan will build an image based on the local Dockerfile and scan it with Sysdig Secure. If the scan fails, the commit will be aborted.
