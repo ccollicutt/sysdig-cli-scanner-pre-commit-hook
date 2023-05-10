@@ -34,3 +34,4 @@ jobs:
         sysdig-api-key: ${{ secrets.SECURE_API_TOKEN }}
         sysdig-api-url: ${{ secrets.SECURE_API_URL }}
         image-name: ${{ vars.IMAGE_NAME }}:latest
+        sysdig-policy-name: ${{ vars.SYSDIG_POLICY_NAME }}
